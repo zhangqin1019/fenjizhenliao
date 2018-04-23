@@ -1,0 +1,75 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>远程阅片</title>
+		<link rel="stylesheet" type="text/css" href="../css/public.css"/><!-- 公共样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/bpage.css"/><!-- 界面样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/showBo.css"/><!-- 弹窗 -->
+		<script type="text/javascript" src="../js/showBo.js"></script><!-- 弹窗js -->
+		<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script><!-- 1.8.3jq库 -->
+		<script type="text/javascript" src="../js/public.js"></script><!-- 公共js -->
+		<script type="text/javascript" src="../js/loadData.js"></script><!-- 数据渲染js -->
+		<style type="text/css">html,body{background-color: #f5f5f5;}</style>
+	</head>
+	<body>
+		<div class="list-content">
+			<div class="list-title">
+				<h3>医联体基层医院 —— </h3>
+			</div>
+			<div class="list-broad">
+				<a href="javaScript:void(0)">首页</a>
+				<span>></span>
+				<a href="javaScript:void(0)">患者信息管理</a>
+				<span>></span>
+				<a href="consapplylist.html">信息修改</a>
+				<span>></span>
+				<a href="consdetail.html" class="a-last">修改详情</a>
+			</div>	
+			<div class="userinfo-container" id="wrap">
+				<h2 style="text-align:center;" > <a href="#">信息修改</a></h2>
+				<div class="first-tab" style="margin:10px 0px;">
+					<form id="form" class="consdetail" name="form" action="" method=""></form>
+				</div>
+				<div class="btn-group">
+					<button class="btn-info" onclick="sub()">提交修改</button>
+					<button type="button" class="btn-info backnav">返回</button>
+				</div>
+			</div>
+			<div class="list-footer">
+    			<p><span>Copyright  &copy; 2014-2018 智慧医联体分级诊疗平台 - Powered By</span><img src="../images/logo.png"/></p>
+    		</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		function sub(){
+			$.ajax({
+				url:$.ip+'/consu/UpPatient',
+				type:'post',
+				data:$('#form').serialize()+'&patientId='+$.objSearch.id,
+				dataType :'json',
+				success:function(data){
+					if (data.msg==1) {
+						Showbo.Msg.alert("修改成功！");
+					} else{
+						Showbo.Msg.alert("提交失败！");
+					}
+				},
+				error:function(){
+					Showbo.Msg.alert("网络出现问题，请联系管理员！");
+				}
+			});
+		}
+		loadData('body').consdetail(function () {
+			$('input#phone').on('change blur', function () {
+				var $this = this
+				if (isNaN($this.value) || $this.value.split('').length!=11) {
+					Showbo.Msg.alert('请输入11位数字的手机号！',function () {
+						$this.value = '';
+						$this.focus();
+					});
+				}
+			});
+		});
+	</script>
+</html>

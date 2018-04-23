@@ -1,0 +1,290 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>转诊申请</title>
+		<link rel="stylesheet" type="text/css" href="../css/public.css" /><!-- 公共样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/bpage.css" /><!-- 界面样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/popup.css" /><!-- popup样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/showBo.css" /><!-- showBo样式 -->
+		<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script><!-- 1.8.3jq库 -->
+		<script type="text/javascript" src="../js/public.js"></script><!-- 公共js -->
+		<script type="text/javascript" src="../js/tab.js"></script><!-- tabjs -->
+		<script type="text/javascript" src="../js/canvas.js"></script><!-- canvas -->
+		<script type="text/javascript" src="../js/popup.js"></script><!-- popup -->
+		<script type="text/javascript" src="../js/loadData.js"></script><!-- loadDatajs -->
+		<script type="text/javascript" src="../js/showBo.js"></script><!-- showBojs -->
+		<style type="text/css">
+			html, body {
+				background-color: #f5f5f5;
+			}
+			.odd tr td:nth-of-type(2n-1) {
+				width: 200px !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="list-content">
+			<div class="list-title">
+				<h3>会诊专家 —— </h3>
+			</div>
+			<div class="list-broad">
+				<a href="javaScript:void(0)">首页</a>
+				<span>></span>
+				<a href="javaScript:void(0)">双向转诊</a>
+				<span>></span>
+				<a href="referrallist.html">转诊申请</a>
+				<span>></span>
+				<a href="referral.html" class="a-last"> 双向转诊详情</a>
+			</div>
+			<div class="userinfo-container" id="wrap">
+				<div class="userinfo-list">
+					<div class="box">
+						<ul class="tab_menu">
+							<li class="current">
+								<a>基本信息</a>
+							</li>
+							<li>
+								<a>病历资料</a>
+							</li>
+							<li>
+								<a>检查资料</a>
+							</li>
+							<li>
+								<a>B超资料</a>
+							</li>
+							<li>
+								<a>X光资料</a>
+							</li>
+							<li class="pathologyTab">
+								<a>病理资料</a>
+							</li>
+							<li>
+								<a href="../cornerstoneImageLoader/index.html" target="_blank">PACS影像</a>
+							</li>
+						</ul>
+						<div class="tab_box">
+							<div class="first-tab clearInput referralForm"></div>
+							<div class="hide historyurl">
+								<ul class="hide-list manage-userinfo fixed">
+									<li>
+										<img width="100%;" src="../images/caseHistory.png" /><br/>
+										<span>病历资料</span>
+									</li>
+								</ul>
+							</div>
+							<div class="hide examineurl">
+								<ul class="hide-list manage-userinfo fixed">
+									<li>
+										<img width="100%;" src="../images/caseHistory.png" /><br/>
+										<span>检查资料</span>
+									</li>
+								</ul>
+							</div>
+							<div class="hide">
+								<div class="bmodeTable bmodeurl"></div>
+							</div>
+							<div class="hide">
+								<div class="xrayTable xrayurl"></div>
+							</div>
+							<div class="hide fixed">
+								<div class="span6">
+									<div class="pathologyTable pathology"></div>
+								</div>
+								<div class="span6">
+									<div class="input-pub" style="height: 600px;border: 2px solid #ccc;">
+										<div id="cvswrap">
+											<div class="thumbnail" id="viewImg" style="width: 200px; height: 124.83px;">
+												<canvas id="viewSmall" width="200" height="124"></canvas>
+												<div class="xline" style="top: 60.91px;"></div>
+												<div class="yline" style="left: 98.5px;"></div>
+												<div class="viewbox" style="width: 200px; height: 242.91px; top: -59.04px; left: 0px; cursor: default;"></div>
+											</div>
+											<button id="FullScreen" class="fullscreen">全屏显示</button>
+											<canvas id="canvas" width="494" height="600" style="cursor: default;"></canvas>
+											<div class="scaleInfo">
+												<a id="scaleSmall" class="small" href="javascript:;"></a>
+												<a id="scaleBig" class="big" href="javascript:;"></a>
+												<div class="scaleFold">
+													<p id="showFold">1</p>
+													<dl id="menuFold">
+														<dd>1</dd>
+														<dd>2</dd>
+														<dd>4</dd>
+														<dd>10</dd>
+														<dd>20</dd>
+														<dd>40</dd>
+													</dl>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="btn-group" id="popup">
+					<button class="btn-info popupBtn">转诊意见</button>
+					<button class="btn-default backnav" style="background-color:#028eed;border-radius:4px;color:#fff;">返回</button>
+				</div>
+			</div>
+			<div class="list-footer">
+    			<p><span>Copyright  &copy; 2014-2018 智慧医联体分级诊疗平台 - Powered By</span><img src="../images/logo.png"/></p>
+    		</div>
+		</div>
+	</body>
+	<script>
+		$(function() {
+			$(".box").Tabs({
+				event: 'click'
+			});
+		});
+		loadData('body').epreferralform(function(data) {
+			var $data = data;
+			$('#bmodelImg').popup({
+				title: 'B超检查图',
+				content: '<div id="bImgcont" style="winth:100%;height:400px;"><canvas></canvas></div>',
+				popupBtn: function(self) {
+					var ele = $('#bImgcont>canvas')[0],
+						imgUrl = $(self).attr('src');
+					loadImg(ele, imgUrl);
+				}
+			})
+			$('#xrayImg').popup({
+				title: 'X光检查图',
+				content: '<div id="xImgcont" style="height:400px;"><canvas></canvas></div>',
+				popupBtn: function(self) {
+					var ele = $('#xImgcont>canvas')[0],
+						imgUrl = $(self).attr('src');
+					loadImg(ele, imgUrl)
+				}
+			})
+			pathlogy();
+			canvas();
+			if (data.statu=='最终确认') {
+				$('div#popup button.popupBtn').text('已提交').attr('disabled',true).addClass('btn-default');
+			}
+			$('div#popup').popup({
+				title: '转诊意见',
+				content: `
+					<style type="text/css">
+						div.refoption{border:0 none;box-shadow:none;}
+						div.refoption div,div.refoption h3{margin-bottom:10px;}
+					</style>
+					<div class="refoption text-left consultation-container">
+						<div id="opinion">
+							<h3>转诊意见:</h3>
+							<label><input type="radio" name="refbtn" checked="checked" value="同意"/>同意</label>
+							<label><input type="radio" name="refbtn" value="不同意"/>不同意</label>
+						</div>
+						<div id="dispacth">
+							<h3>转诊安排：</h3>
+							<form id="selectdocD" name="selectdoc" action="" method="">
+								<table class="supplement public-table" id="doc">
+									<tr>
+										<td>转诊日期：</td>
+										<td><input type="datetime-local" name="finalDate" /><input type="hidden" name="id" value="`+$.objSearch.id+`" /></td>
+									</tr>
+								</table>
+							</form>
+						</div>
+						<div id="refuse" class="hide">
+							<h3>拒绝原因：</h3>
+							<form id="selectdocR" name="selectdoc" action="" method="">
+								<input type="hidden" name="id" value="`+$.objSearch.id+`" />
+								<select name="explaination">
+									<option value="请假">请假</option>
+									<option value="出差">出差</option>
+									<option value="外出学习">外出学习</option>
+								</select>
+							</form>
+						</div>
+					</div>`,
+				btn: true,
+				popupBtn: function () {
+					$('div.refoption label').click(function () {
+						if ($(this).text()=='同意') {
+							$('div#dispacth').removeClass('hide');
+							$('div#refuse').addClass('hide');
+						} else {
+							$('button.popup-confirm').attr('disabled',false);
+							$('div#dispacth').addClass('hide');
+							$('div#refuse').removeClass('hide');
+						}
+					})
+				},
+				confirmBtn: function () {
+					if ($('input[name=planTime]').val()=='') {
+						Showbo.Msg.alert('请选择转诊日期！')
+						return;
+					}
+					if ($('div.refoption div#opinion input:checked').val()=='同意') {
+						$.ajax({
+							url:$.ip+'/manTransfer/upfinalDate',
+							type: 'post',
+							data:$("#selectdocD").serialize(),
+							dataType:'json',
+							xhrFields: {
+								withCredentials: true
+							},
+							crossDomain: true,
+							success:function(data){
+								if (data.msg==1) {
+									Showbo.Msg.alert('提交成功！',function () {
+										var finalDate = $('input[name=finalDate]').val().split('T').join(' ');
+										//发给患者
+										duanxin({statu:0,phone:$data.phone,hospital:$data.planHospital,pname:$data.patientName,time:finalDate});
+										//发给专家
+										duanxin({statu:1,phone:$data.docPhone,pname:$data.patientName,time:finalDate,dname:$data.specialist});
+									});
+								}else{
+									Showbo.Msg.alert('提交失败！');
+								}
+							},
+							error:function(){
+								Showbo.Msg.alert("网络错误，请联系管理员！")
+							}
+						});
+						
+					} else{
+						$.ajax({
+							url:$.ip+'/DocTrans/addexp',
+							type: 'post',
+							data:$("#selectdocR").serialize(),
+							dataType:'json',
+							xhrFields: {
+								withCredentials: true
+							},
+							crossDomain: true,
+							success:function(data){
+								if (data.msg==1) {
+									Showbo.Msg.alert('提交成功！',function () {
+										backNav();
+									});
+								}else{
+									Showbo.Msg.alert('提交失败！');
+								}
+							},
+							error:function(){
+								Showbo.Msg.alert("网络错误，请联系管理员！")
+							}
+						});
+					}
+				}
+			})
+			function duanxin(obj) {
+				$.ajax({
+					url:'https://wechat.imuts.cn/wechat/hunan',
+					type: 'post',
+	        		async: true,
+					data: obj,
+					dataType:'json',
+					success:function(data){
+//						backNav();
+					}
+				})
+			}
+		});
+	</script>
+</html>

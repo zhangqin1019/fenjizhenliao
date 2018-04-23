@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>患者详情</title>
+		<link rel="stylesheet" type="text/css" href="../css/public.css" /><!-- 公共样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/bpage.css" /><!-- 界面样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/popup.css" /><!-- popup样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/showBo.css" /><!-- 弹窗 -->
+		<script type="text/javascript" src="../js/showBo.js"></script><!-- 弹窗js -->
+		<script type="text/javascript" src="../js/html2canvas.js"></script><!-- 截图js -->
+		<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script><!-- 1.8.3jq库 -->
+		<script type="text/javascript" src="../js/public.js"></script><!-- 公共js -->
+		<script type="text/javascript" src="../js/tab.js"></script><!-- tabjs -->
+		<script type="text/javascript" src="../js/canvas.js"></script><!-- canvasjs -->
+		<script type="text/javascript" src="../js/popup.js"></script><!-- popupjs -->
+		<script type="text/javascript" src="../js/loadData.js"></script><!-- 数据渲染js -->
+		<style type="text/css">html, body {background-color: #f5f5f5;}</style>
+	</head>
+	<body>
+		<div class="list-content">
+			<div class="list-title">
+				<h3>医联体基层医院 —— </h3>
+			</div>
+			<div class="list-broad">
+				<a href="javaScript:void(0)">首页</a>
+                <span>></span>
+                <a href="javaScript:void(0)">患者信息管理</a>
+                <span>></span>
+                <a href="illList.html">患者信息</a>
+				<span>></span>
+				<a href="illinfo.html" class="a-last">患者详情</a>
+			</div>
+			<div class="userinfo-container" id="wrap">
+				<div class="userinfo-list">
+					<div class="box">
+						<ul class="tab_menu">
+							<li class="current">
+								<a>基本信息</a>
+							</li>
+							<li>
+								<a>病历资料</a>
+							</li>
+							<li>
+								<a>检查资料</a>
+							</li>
+							<li>
+								<a>B超资料</a>
+							</li>
+							<li>
+								<a>X光资料</a>
+							</li>
+							<li class="pathologyTab">
+								<a>病理资料</a>
+							</li>
+							<li>
+								<a href="../cornerstoneImageLoader/indexMember.html" target="_blank">PACS影像</a>
+							</li>
+						</ul>
+						<div class="tab_box">
+							<div class="first-tab clearInput illinfo"></div>
+							<div class="hide historyurl">
+								<ul class="hide-list manage-userinfo fixed">
+									<li>
+										<img width="100%;" src="../images/caseHistory.png" /><br/>
+										<span>病历资料</span>
+									</li>
+								</ul>
+							</div>
+							<div class="hide examineurl">
+								<ul class="hide-list manage-userinfo fixed">
+									<li>
+										<img width="100%;" src="../images/caseHistory.png" /><br/>
+										<span>检查资料</span>
+									</li>
+								</ul>
+							</div>
+							<div class="hide">
+								<div class="bmodeTable bmodeurl"></div>
+							</div>
+							<div class="hide">
+								<div class="xrayTable xrayurl"></div>
+							</div>
+							<div class="hide fixed">
+								<div class="span6">
+									<div class="pathologyTable telepathology"></div>
+								</div>
+								<div class="span6">
+									<div class="input-pub" style="height: 600px;border: 2px solid #ccc;">
+										<div id="cvswrap">
+											<div class="thumbnail" id="viewImg" style="width: 200px; height: 124.83px;">
+												<canvas id="viewSmall" width="200" height="124"></canvas>
+												<div class="xline" style="top: 60.91px;"></div>
+												<div class="yline" style="left: 98.5px;"></div>
+												<div class="viewbox" style="width: 200px; height: 242.91px; top: -59.04px; left: 0px; cursor: default;"></div>
+											</div>
+											<button id="FullScreen" class="fullscreen">全屏显示</button>
+											<canvas id="canvas" width="494" height="600" style="cursor: default;"></canvas>
+											<div class="scaleInfo">
+												<a id="scaleSmall" class="small" href="javascript:;"></a>
+												<a id="scaleBig" class="big" href="javascript:;"></a>
+												<div class="scaleFold">
+													<p id="showFold">1</p>
+													<dl id="menuFold">
+														<dd>1</dd>
+														<dd>2</dd>
+														<dd>4</dd>
+														<dd>10</dd>
+														<dd>20</dd>
+														<dd>40</dd>
+													</dl>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="btn-group" id="popup">
+					<button class="btn-info popupBtn">远程诊疗申请</button>
+					<button class="btn-info popupBtn">转诊申请</button>
+					<button class="btn-default backnav" style="background-color:#028eed;border-radius:4px;color:#fff;">返回</button>
+				</div>
+			</div>
+			<div class="list-footer">
+    			<p><span>Copyright  &copy; 2014-2018 智慧医联体分级诊疗平台 - Powered By</span><img src="../images/logo.png"/></p>
+    		</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var objSearch = $.objSearch;
+		console.log(objSearch)
+		console.log(objSearch.hospitalId)
+		//渲染框架
+		loadData('body').illinfo(function(data) {
+			var $this = this;
+			//去input的text框
+			var table_input = $('.clearInput>table tr>td>input,.clearInput>table tr>td>textarea');
+			table_input.each(function(i) {
+				var table_td = table_input.eq(i).closest('td');
+				table_txt = table_td.html() + table_input.eq(i).val();
+				if(table_txt.indexOf('会诊日期') != -1) {
+					table_txt = table_txt.split('T').join(' ');
+				}
+				table_td.html(table_txt);
+			});
+			$('.clearInput>table tr>td>input,.clearInput>table tr>td>textarea').remove();
+			$('.clearInput>table tr>td>br').remove();
+			$('#bmodelImg').popup({
+				title: 'B超检查图',
+				content: '<div id="bImgcont" style="winth:100%;height:400px;"><canvas></canvas></div>',
+				popupBtn: function (self) {
+					var ele = $('#bImgcont>canvas')[0],
+						imgUrl = $(self).attr('src');
+					loadImg(ele,imgUrl);
+				}
+			})
+			$('#xrayImg').popup({
+				title: 'X光检查图',
+				content: '<div id="xImgcont" style="height:400px;"><canvas></canvas></div>',
+				popupBtn: function (self) {
+					var ele = $('#xImgcont>canvas')[0],
+						imgUrl = $(self).attr('src');
+					loadImg(ele,imgUrl)
+				}
+			})
+			pathlogy();
+			canvas();
+			console.log($('#formA').serialize())
+			$('div#popup').popup({
+				title: '会诊申请',
+				btn: true,
+				content: `<div class="border consultation-container" style="border:0 none;box-shadow:none;"></div>`,
+				popupBtn: function (self) {
+					var title = $(self).text();
+					if (title=='会诊申请') {
+						$('div#popup div.popheader h2').text(title);
+						$('div.border').html($this.modelarr.children('#conAdd').val());
+					} else{
+						$('div#popup div.popheader h2').text(title);
+						$('div.border').html($this.modelarr.children('#refAdd').val());
+					}
+					$("#createDoctorNo").click(function() {
+						$.ajax({
+							url: $.ip + "/member/createDoctor",
+							type: 'post',
+							dataType: 'json',
+							xhrFields: {
+								withCredentials: true
+							},
+							crossDomain: true,
+							success: function(data) {
+								$("#doctorNo").val(data.random);
+								setTimeout(function() { //防止与正则冲突延迟
+									var btnSubmit = document.getElementById("createDoctorNo"); //防止多次点击提交
+									btnSubmit.disabled = "disabled";
+								}, 0)
+							}
+						});
+					});
+				},
+				confirmBtn: function () {
+					var title = $('div#popup div.popheader h2').text();
+					var returnval = null;
+					$('#formB [name],#formC [name]').each(function (idx,ele) {
+						if (ele.value.trim()=='') {
+							var val = ele.parentNode.previousElementSibling.innerText;
+							var txt = ele.type == 'text' ? '请输入' : (ele.type == 'number' ? '请生成' : '请选择');
+							Showbo.Msg.alert(txt + val + '！')
+							returnval = true;
+							return false;
+						}
+					});
+					if (returnval) {
+						return false;
+					}
+					if (title=='会诊申请') {
+						if (document.getElementById("doctorNo").value=='') {
+							return;
+						}
+						$.ajax({
+							url: $.ip + '/consu/borderAdd',
+							type: 'post',
+							dataType: 'json',
+							data: $("#formA").serialize()+'&'+$("#formB").serialize()+'&hospitalId='+objSearch.hospitalId+'&hospitalName='+objSearch.hospitalName,
+							xhrFields: {
+								withCredentials: true
+							},
+							crossDomain: true,
+							success: function(data) {
+								if (data.msg==1) {
+									Showbo.Msg.alert('会诊申请成功！');
+								}
+							}
+						});
+					} else{
+						$.ajax({
+			        		url:$.ip+'/Transfer/applyRefrral',
+			        		type:'post', 
+			        		async: true,
+			        		data: $('#formA').serialize()+'&'+$('#formC').serialize()+'&hospitalId='+objSearch.hospitalId+'&hospitalName='+objSearch.hospitalName,
+			        		dataType :'json',
+			        		xhrFields: {
+			                    withCredentials: true
+			              	},
+			               	crossDomain: true,
+			        		success:function(data){
+								Showbo.Msg.alert('转诊申请成功！');
+			        			$.ajax({
+					        		url:$.ip+'/Transfer/inform',
+					        		type:'post', 
+					        		async: true,
+					        		data:'hospitalId='+objSearch.hospitalId,
+					        		dataType :'json',
+					        		xhrFields: {
+					                    withCredentials: true
+					              	},
+					               	crossDomain: true,
+					        		success:function(data){
+					        		}
+					        	})
+			        		},
+			        		error:function () {
+			        			Showbo.Msg.alert('提交失败！')
+			        		}
+			        	});
+					}
+				}
+			});
+		});
+		$(function() {
+			$(".box").Tabs({
+				event: 'click'
+			});
+		});
+	</script>
+</html>

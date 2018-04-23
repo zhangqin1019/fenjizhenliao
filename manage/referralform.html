@@ -1,0 +1,482 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>转诊申请</title>
+		<link rel="stylesheet" type="text/css" href="../css/public.css" /><!-- 公共样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/bpage.css" /><!-- 界面样式 -->
+		<link rel="stylesheet" type="text/css" href="../css/showBo.css"/><!-- 弹窗 -->
+		<link rel="stylesheet" type="text/css" href="../css/popup.css"/><!-- popup弹窗 -->
+		<script type="text/javascript" src="../js/showBo.js"></script><!-- 弹窗js -->
+		<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script><!-- 1.8.3jq库 -->
+		<script type="text/javascript" src="../js/tab.js"></script><!-- tabjs -->
+		<script type="text/javascript" src="../js/canvas.js"></script><!-- canvasjs -->
+		<script type="text/javascript" src="../js/public.js"></script><!-- 公共js -->
+		<script type="text/javascript" src="../js/jquery.jqprint-0.3.js"></script><!-- 打印 -->
+		<script type="text/javascript" src="../js/loadData.js"></script><!-- 数据渲染js -->
+		<script type="text/javascript" src="../js/popup.js"></script><!-- popupjs -->
+		<style type="text/css">
+			html, body {
+				background-color: #f5f5f5;
+			}
+			.odd tr td:nth-of-type(2n-1) {
+				width: 200px !important;
+			}
+			.show {
+				display: inline-block;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="list-content">
+			<div class="list-title">
+				<h3>医联体上级医院 —— </h3>
+			</div>
+			<div class="list-broad">
+				<a href="javaScript:void(0)">首页</a>
+				<span>></span>
+				<a href="javaScript:void(0)">双向转诊</a>
+				<span>></span>
+				<a href="referral.html">转诊申请</a>
+				<span>></span>
+				<a href="referralform.html" class="a-last">转诊申请反馈</a>
+			</div>
+			<div class="userinfo-container" id="wrap">
+				<div class="userinfo-list">
+					<div class="box">
+						<ul class="tab_menu">
+							<li class="current">
+								<a>基本信息</a>
+							</li>
+							<li>
+								<a>病历资料</a>
+							</li>
+							<li>
+								<a>检查资料</a>
+							</li>
+							<li>
+								<a>B超资料</a>
+							</li>
+							<li>
+								<a>X光资料</a>
+							</li>
+							<li class="pathologyTab">
+								<a>病理资料</a>
+							</li>
+							<li>
+								<a href="../cornerstoneImageLoader/index.html" target="_blank">PACS影像</a>
+							</li>
+						</ul>
+						<div class="tab_box">
+							<div class="first-tab clearInput referralForm"></div>
+							<div class="hide historyurl">
+								<ul class="hide-list manage-userinfo fixed">
+									<li>
+										<img width="100%;" src="../images/caseHistory.png" /><br/>
+										<span>病历资料</span>
+									</li>
+								</ul>
+							</div>
+							<div class="hide examineurl">
+								<ul class="hide-list manage-userinfo fixed">
+									<li>
+										<img width="100%;" src="../images/caseHistory.png" /><br/>
+										<span>检查资料</span>
+									</li>
+								</ul>
+							</div>
+							<div class="hide">
+								<div class="bmodeTable bmodeurl"></div>
+							</div>
+							<div class="hide">
+								<div class="xrayTable xrayurl"></div>
+							</div>
+							<div class="hide fixed">
+								<div class="span6">
+									<div class="pathologyTable telepathology"></div>
+								</div>
+								<div class="span6">
+									<div class="input-pub" style="height: 600px;border: 2px solid #ccc;">
+										<div id="cvswrap">
+											<div class="thumbnail" id="viewImg" style="width: 200px; height: 124.83px;">
+												<canvas id="viewSmall" width="200" height="124"></canvas>
+												<div class="xline" style="top: 60.91px;"></div>
+												<div class="yline" style="left: 98.5px;"></div>
+												<div class="viewbox" style="width: 200px; height: 242.91px; top: -59.04px; left: 0px; cursor: default;"></div>
+											</div>
+											<button id="FullScreen" class="fullscreen">全屏显示</button>
+											<canvas id="canvas" width="494" height="600" style="cursor: default;"></canvas>
+											<div class="scaleInfo">
+												<a id="scaleSmall" class="small" href="javascript:;"></a>
+												<a id="scaleBig" class="big" href="javascript:;"></a>
+												<div class="scaleFold">
+													<p id="showFold">1</p>
+													<dl id="menuFold">
+														<dd>1</dd>
+														<dd>2</dd>
+														<dd>4</dd>
+														<dd>10</dd>
+														<dd>20</dd>
+														<dd>40</dd>
+													</dl>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="btn-group" id="popup">
+					<button class="btn-info popupBtn">转诊审核</button>
+					<button class="btn-default backnav" style="background-color:#028eed;border-radius:4px;color:#fff;">返回</button>
+				</div>
+			</div>
+			<div class="list-footer">
+    			<p><span>Copyright  &copy; 2014-2018 智慧医联体分级诊疗平台 - Powered By</span><img src="../images/logo.png"/></p>
+    		</div>
+		</div>
+	</body>
+	<script>
+		$(function() {
+			var onoffconsole = true;
+			onoffconsole&&console.log($.objSearch);
+			$(function() {
+				$(".box").Tabs({
+					event: 'click'
+				});
+			});
+			loadData('body').mgreferralform(function (data) {
+				onoffconsole&&console.log(data);
+				$('#bmodelImg').popup({
+					title: 'B超检查图',
+					content: '<div id="bImgcont" style="winth:100%;height:400px;"><canvas></canvas></div>',
+					popupBtn: function (self) {
+						var ele = $('#bImgcont>canvas')[0],
+							imgUrl = $(self).attr('src');
+						loadImg(ele,imgUrl);
+					}
+				})
+				$('#xrayImg').popup({
+					title: 'X光检查图',
+					content: '<div id="xImgcont" style="height:400px;"><canvas></canvas></div>',
+					popupBtn: function (self) {
+						var ele = $('#xImgcont>canvas')[0],
+							imgUrl = $(self).attr('src');
+						loadImg(ele,imgUrl)
+					}
+				})
+				pathlogy();
+				canvas();
+				if (data.statu == '待专家确定') {
+					$('div#popup button.popupBtn').text('已审核').attr('disabled',true).addClass('btn-default');
+				}
+				var doctable,doclist;
+				$('div#popup').popup({
+					title:'转诊审核',
+					btn:true,
+					content: `
+							<style type="text/css">
+								div.refoption div,div.refoption h3{margin-bottom:10px;}
+							</style>
+							<div class="refoption text-left">
+								<div id="opinion">
+									<h3>审核意见:</h3>
+									<label><input type="radio" name="refbtn" checked="checked" value="同意"/>同意</label>
+									<label><input type="radio" name="refbtn" value="不同意"/>不同意</label>
+								</div>
+								<div id="dispacth">
+									<h3>分配专家：</h3>
+									<form id="selectdoc" name="selectdoc" action="" method="">
+										<table class="table-border" id="doc">
+											<tbody></tbody>
+										</table>
+									</form>
+								</div>
+								<div id="refuse" class="hide">
+									<h3>拒绝原因：</h3>
+									<form id="selectdocR" name="selectdoc" action="" method="">
+										<textarea style="width: 98%;" rows="5" name="opinion" class="input-pub"></textarea>
+									</form>
+								</div>
+							</div>`,
+					popupBtn: function () {
+						$('button.popup-confirm').attr('disabled',true);
+						$('div.refoption label').click(function () {
+							if ($(this).text()=='同意') {
+								$('div#dispacth').removeClass('hide');
+								$('div#refuse').addClass('hide');
+								$('button.popup-confirm').attr('disabled',true);
+							} else {
+								$('button.popup-confirm').attr('disabled',false);
+								$('div#dispacth').addClass('hide');
+								$('div#refuse').removeClass('hide');
+							}
+						})
+						doctable = $('#doc')[0];//获取表格table
+						doclist = doctable.tBodies[0];//表格table下的tbody,显示后获取;
+						$.ajax({
+							url:$.ip+'/docList/selectList',
+							type: 'post',
+							data:$("#hosid").serialize(),
+							dataType:'json',
+							xhrFields: {
+								withCredentials: true
+							},
+							crossDomain: true,
+							success:function(data){
+								//渲染医生数据
+								var arr = data.listMap;
+								doclist.innerHTML = '';
+								for (var i=0;i<arr.length;i+=4) {
+									var tr = doclist.insertRow();
+									var dmax = (i+4)>arr.length ? arr.length : i+4;
+									for (var d=i;d<dmax;d++) {
+										var td = tr.insertCell();
+										var radioDoc = document.createElement('input');
+										var labelDoc = document.createElement('label');
+										radioDoc.type = 'radio';
+										radioDoc.name = 'doc';
+										radioDoc.id = 'doc' + d;
+										radioDoc.value = arr[d].docNum+'-'+arr[d].docName;	
+										labelDoc.innerText = arr[d].docNum+arr[d].docName;
+										td.style.cursor = radioDoc.style.cursor = labelDoc.style.cursor = 'pointer';
+										(function (obj) {
+											td.onclick = function (e) {
+												obj.checked = true;
+												if (obj.checked) {
+													$('button.popup-confirm').attr('disabled',false);//选状态可以确认
+												}
+											}
+										})(radioDoc);
+										td.appendChild(radioDoc);
+										td.appendChild(labelDoc);
+									}
+								}
+							},
+							error:function(){
+								Showbo.Msg.alert("网络错误，请联系管理员！")
+							}
+						});
+					},
+					confirmBtn: function () {
+						if ($('div.refoption div#opinion input:checked').val()=='同意') {
+							$.ajax({
+								url:$.ip+'/manTransfer/addDoc',
+								type: 'post',
+								data:$("#selectdoc").serialize()+'&id='+ $.objSearch.id,
+								dataType:'json',
+								xhrFields: {
+									withCredentials: true
+								},
+								crossDomain: true,
+								success:function(data){
+									if(data.msg ==1){
+										doclist.innerHTML = '';
+										Showbo.Msg.alert('提交成功！',function () {
+											backNav();
+										})
+									}else Showbo.Msg.alert("分配失败，请重新分配！");
+								},error:function(){
+									Showbo.Msg.alert("网络错误，请联系管理员");
+								}
+							});
+						}else{
+							$.ajax({
+								url:$.ip+'/manTransfer/update',
+								type: 'post',
+								data:$("#selectdocR").serialize()+'&id='+ $.objSearch.id,
+								dataType:'json',
+								xhrFields: {
+									withCredentials: true
+								},
+								crossDomain: true,
+								success:function(data){
+									if(data.msg ==1){
+										doclist.innerHTML = '';
+										Showbo.Msg.alert('提交成功！',function () {
+											backNav();
+										})
+									}else Showbo.Msg.alert("分配失败，请重新分配！");
+								},error:function(){
+									Showbo.Msg.alert("网络错误，请联系管理员");
+								}
+							});
+						}
+					}
+				})
+//				$("#btn2").click(function() {
+//					$("#btn3").css("display", "block");
+//				})
+//				$('.btn-modify').click(function() {
+//					$('.popupBtn').removeClass('hide');
+//					$('.btn-modify').addClass('hide');
+//					$('.btn-confirm').addClass('hide');
+//				});
+//				if(data.statu == '待最终确认') {
+//					$('.btn-modify').removeClass('hide');
+//					$('.btn-confirm').removeClass('hide');
+//					$('.popupBtn').addClass('hide');
+//				}
+//				if(data.statu == '已最终确认') {
+//					$('.table1').addClass('hide'); //审核表
+//					$('.table2').removeClass('hide'); //反馈表
+//					$('.qwe').removeClass('hide');
+//				};
+//				if(data.statu == '已向下转诊') {
+//					$('.table1').addClass('hide'); //审核表
+//					$('.table2').removeClass('hide'); //反馈表
+//					$('.qwe').removeClass('hide');
+//					$("#btn3").css("display", "block");
+//					$("#btn4").text("已提交").attr('disabled', true).css({
+//						'background-color': '#ccc',
+//						'border-color': '#aaa'
+//					}).siblings('textarea').attr('readOnly', true);
+//				}
+//				$('#fenpei').click(function () {
+//					$.ajax({
+//						url: $.ip + '/manTransfer/upfinalDate',
+//						type: 'post',
+//						data: $("#form1").serialize()+'&id='+data.id,
+//						dataType: "json",
+//						success: function(data) {
+//							if(data.msg == 1) {
+//								location.href=location.href;
+//							} else Showbo.Msg.alert("网络错误，请联系管理员");
+//						},
+//						error: function() {
+//							Showbo.Msg.alert("错误");
+//						}
+//					});
+//				})
+//				var hospitalId = data.hospitalId,
+//					patient = data.patientName;
+//				$('.btn-confirm').click(function() { //确定按钮
+//					$.ajax({ //提交最后状态
+//						url: $.ip + '/manTransfer/upconfirm',
+//						type: 'post',
+//						data: $("#form1").serialize()+'&id='+data.id,
+//						dataType: "json",
+//						success: function(data) {
+//							$('.table1').addClass('hide'); //审核表
+//							$('.table2').removeClass('hide'); //反馈表
+//							$('.qwe').removeClass('hide');
+//							gethospitalmsg({
+//								'hospitalId':hospitalId,
+//								'statu':2,
+//								'patient': patient,
+//								'time': $('#finalDate').val()
+//							});
+//						},
+//						error: function() {
+//							Showbo.Msg.alert("错误");
+//						}
+//					});
+//				})
+//				$("#btn4").click(function() {
+//					var pronation = document.getElementById("pronation").value;
+//					$.ajax({
+//						url: $.ip + '/manTransfer/opup',
+//						type: 'post',
+//						data: {
+//							"pronation": pronation,
+//							"id": data.id
+//						},
+//						dataType: "json",
+//						success: function(data) {
+//							if(data.msg == 1) {
+//								gethospitalmsg({
+//								'hospitalId':hospitalId,
+//								'statu':3,
+//								'patient': patient,
+//								'hospital2': $.objSearch.hospitalName
+//							});
+//							} else {
+//								Showbo.Msg.alert("网络延迟，请重试！");
+//							}
+//						},
+//						error: function() {
+//							Showbo.Msg.alert("错误");
+//						}
+//					})
+//					$(this).text("已提交").attr('disabled', true).css({
+//						'background-color': '#ccc',
+//						'border-color': '#aaa'
+//					});
+//				});
+			});
+			//hospitalId,statu,patient,time,hospital2
+			function gethospitalmsg(obj) {
+				$.ajax({
+	        		url:$.ip+'/manTransfer/inform',
+	        		type:'post', 
+	        		async: true,
+	        		data:'hospitalId='+obj.hospitalId,
+	        		dataType :'json',
+	        		xhrFields: {
+	                    withCredentials: true
+	              	},
+	               	crossDomain: true,
+	        		success:function(data){
+	        			onoffconsole&&console.log(data);
+	        			var deanPhone = data.deanPhone,
+	        				hospital = data.hospitalName;
+	        			onoffconsole&&console.log(deanPhone,hospital);
+	        			inform({
+	        				'deanPhone': deanPhone,
+		        			'hospital': hospital,
+		        			'patient': obj.patient,
+		        			'hospital2': obj.hospital2,
+		        			'time': obj.time,
+		        			'statu':obj.statu
+	        			});
+	        		}
+	       		})
+			}
+			/**
+			 * 发送短信通知函数
+			 * @param {Number} deanPhone 医院电话号码
+			 * @param {String} hospitalName 
+			 * @param {String} hospital 医院
+			 * @param {String} patient
+			 * @param {String} hospital2
+			 * @param {String} chamber
+			 * @param {Date} time
+			 */
+			//statu,hospital,patient,hospital2,deanPhone,chamber,time
+			function inform(obj) {
+        		$.ajax({
+	        		url:'https://wechat.imuts.cn/wechat/sendMessage1',
+	        		type:'post', 
+	        		async: true,
+	        		data:{
+	        			'number': obj.deanPhone||'',
+	        			'hospital': obj.hospital||'',
+	        			'patient': obj.patientv||'',
+	        			'hospital2': obj.hospital2||'',
+	        			'chamber': obj.chamber||'',
+	        			'time': obj.time||'',
+	        			'statu':obj.statu||''
+	        		},
+	        		dataType :'json',
+	        		success:function(data){
+		        		onoffconsole&&console.log(data);
+	        			if (data.message == 'ok') {
+	        				Showbo.Msg.alert('提交成功！已向'+hospital+'发送短信通知！',function () {
+								history.back(-1);
+	        				})
+	        			}else{
+	        				Showbo.Msg.buttons = {yes:'重新发送'};
+	        				Showbo.Msg.confirm('短信发送失败，请重新返送！',function (bool) {
+								if (bool) {
+									inform(obj);
+								}
+	        				})
+	        			}
+	        		}
+        		});
+        	};
+		})
+	</script>
+</html>
